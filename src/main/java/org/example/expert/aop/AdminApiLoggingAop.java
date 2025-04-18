@@ -1,6 +1,7 @@
 package org.example.expert.aop;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -10,12 +11,13 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+@RequiredArgsConstructor
 @Slf4j
 @Component
 @Aspect
 public class AdminApiLoggingAop {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
     @Around("execution(* org.example.expert.domain.comment.controller.CommentAdminController.*(..)) || " +
             "execution(* org.example.expert.domain.user.controller.UserAdminController.*(..))")
