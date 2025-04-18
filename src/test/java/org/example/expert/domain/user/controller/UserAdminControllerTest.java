@@ -35,7 +35,7 @@ class UserAdminControllerTest {
     private UserRepository userRepository;
 
     @Test
-    void 회원_권한을_정상적으로_변경하고_AOP_로그가_출력ㄴ된다(CapturedOutput output) throws Exception {
+    void 회원_권한을_정상적으로_변경하고_AOP_로그가_출력된다(CapturedOutput output) throws Exception {
         // given
         User user = userRepository.save(new User("user@test.com", "Password1@", UserRole.USER));
         Long userId = user.getId();
@@ -43,8 +43,8 @@ class UserAdminControllerTest {
         User admin = userRepository.save(new User("admin@test.com", "Password1@", UserRole.ADMIN));
         Long adminId = admin.getId();
 
-        UserRoleChangeRequest UserRoleChangeRequest = new UserRoleChangeRequest("ADMIN");
-        String json = objectMapper.writeValueAsString(UserRoleChangeRequest);
+        UserRoleChangeRequest userRoleChangeRequest = new UserRoleChangeRequest("ADMIN");
+        String json = objectMapper.writeValueAsString(userRoleChangeRequest);
 
         // when
         mockMvc.perform(patch("/admin/users/" + userId)
