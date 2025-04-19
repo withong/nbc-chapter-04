@@ -31,6 +31,7 @@ class UserAdminControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
     @Autowired
     private UserRepository userRepository;
 

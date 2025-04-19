@@ -1,13 +1,14 @@
 package org.example.expert.domain.todo.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.expert.client.WeatherClient;
-import org.example.expert.domain.common.dto.AuthUser;
-import org.example.expert.domain.common.exception.InvalidRequestException;
+import org.example.expert.common.client.WeatherClient;
+import org.example.expert.common.dto.AuthUser;
+import org.example.expert.common.exception.InvalidRequestException;
 import org.example.expert.domain.todo.dto.request.TodoSaveRequest;
 import org.example.expert.domain.todo.dto.response.TodoResponse;
 import org.example.expert.domain.todo.dto.response.TodoSaveResponse;
 import org.example.expert.domain.todo.entity.Todo;
+import org.example.expert.domain.todo.exception.TodoErrorCode;
 import org.example.expert.domain.todo.repository.TodoRepository;
 import org.example.expert.domain.user.dto.response.UserResponse;
 import org.example.expert.domain.user.entity.User;
@@ -66,7 +67,7 @@ public class TodoService {
 
     public TodoResponse getTodo(long todoId) {
         Todo todo = todoRepository.findByIdWithUser(todoId)
-                .orElseThrow(() -> new InvalidRequestException("Todo not found"));
+                .orElseThrow(() -> new InvalidRequestException(TodoErrorCode.TODO_NOT_FOUND));
 
         User user = todo.getUser();
 

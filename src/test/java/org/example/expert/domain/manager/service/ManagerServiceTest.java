@@ -1,13 +1,15 @@
 package org.example.expert.domain.manager.service;
 
-import org.example.expert.domain.common.dto.AuthUser;
-import org.example.expert.domain.common.exception.InvalidRequestException;
+import org.example.expert.common.dto.AuthUser;
+import org.example.expert.common.exception.InvalidRequestException;
 import org.example.expert.domain.manager.dto.request.ManagerSaveRequest;
 import org.example.expert.domain.manager.dto.response.ManagerResponse;
 import org.example.expert.domain.manager.dto.response.ManagerSaveResponse;
 import org.example.expert.domain.manager.entity.Manager;
+import org.example.expert.domain.manager.exception.ManagerErrorCode;
 import org.example.expert.domain.manager.repository.ManagerRepository;
 import org.example.expert.domain.todo.entity.Todo;
+import org.example.expert.domain.todo.exception.TodoErrorCode;
 import org.example.expert.domain.todo.repository.TodoRepository;
 import org.example.expert.domain.user.entity.User;
 import org.example.expert.domain.user.enums.UserRole;
@@ -46,7 +48,7 @@ class ManagerServiceTest {
 
         // when & then
         InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> managerService.getManagers(todoId));
-        assertEquals("Todo not found", exception.getMessage());
+        assertEquals(TodoErrorCode.TODO_NOT_FOUND.getMessage(), exception.getMessage());
     }
 
     @Test
@@ -68,7 +70,7 @@ class ManagerServiceTest {
             managerService.saveManager(authUser, todoId, managerSaveRequest)
         );
 
-        assertEquals("담당자를 등록하려고 하는 유저가 일정을 만든 유저가 유효하지 않습니다.", exception.getMessage());
+        assertEquals(ManagerErrorCode.INVALID_MANAGER_REQUESTER.getMessage(), exception.getMessage());
     }
 
     @Test // 테스트코드 샘플
