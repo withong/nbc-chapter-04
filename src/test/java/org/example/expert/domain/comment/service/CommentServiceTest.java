@@ -1,6 +1,7 @@
 package org.example.expert.domain.comment.service;
 
 import org.example.expert.domain.comment.dto.request.CommentSaveRequest;
+import org.example.expert.domain.comment.dto.response.CommentResponse;
 import org.example.expert.domain.comment.dto.response.CommentSaveResponse;
 import org.example.expert.domain.comment.entity.Comment;
 import org.example.expert.domain.comment.repository.CommentRepository;
@@ -17,7 +18,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -57,8 +60,10 @@ class CommentServiceTest {
         // given
         long todoId = 1;
         CommentSaveRequest request = new CommentSaveRequest("contents");
+
         AuthUser authUser = new AuthUser(1L, "email", UserRole.USER);
         User user = User.fromAuthUser(authUser);
+
         Todo todo = new Todo("title", "title", "contents", user);
         Comment comment = new Comment(request.getContents(), user, todo);
 
@@ -70,5 +75,31 @@ class CommentServiceTest {
 
         // then
         assertNotNull(result);
+    }
+
+    @Test
+    void 댓글_목록_조회_성공() {
+        // given
+        User user = new User("test@test.com", "password", UserRole.USER);
+        Todo todo = new Todo("title", "contents", "weather", user);
+        Long todoId = 1L;
+
+        List<Comment> commentList = List.of(
+                new Comment("contents", user, todo),
+                new Comment("contents", user, todo)
+        );
+
+        given(commentRepository.findByTodoIdWithUser(anyLong())).willReturn(commentList);
+
+        // when
+        List<CommentResponse> result = commentService.getComments(todoId);
+
+        // then
+        assertEquals(commentList.size(), result.size());
+
+        IntStream.range(0, result.size()).forEach(i -> {
+            assertEquals(commentList.get(i).getContents(), result.get(i).getContents());
+            assertEquals(commentList.get(i).getUser().getEmail(), result.get(i).getUser().getEmail());
+        });
     }
 }
