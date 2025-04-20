@@ -81,10 +81,9 @@ class ManagerServiceTest {
     void 로그인된_사용자와_일정_작성자가_일치하지_않으면_예외를_던진다() {
         // given
         AuthUser authUser = new AuthUser(1L, "test@test.com", UserRole.USER);
-        User user = User.fromAuthUser(authUser);
 
         User todoUser = new User("todo@test.com", "password", UserRole.USER);
-        ReflectionTestUtils.setField(user, "id", 2L);
+        ReflectionTestUtils.setField(todoUser, "id", 2L);
 
         Long todoId = 1L;
 
