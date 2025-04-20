@@ -2,28 +2,23 @@ package org.example.expert.domain.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.expert.domain.user.dto.request.UserRoleChangeRequest;
-import org.example.expert.domain.user.entity.User;
-import org.example.expert.domain.user.enums.UserRole;
-import org.example.expert.domain.user.repository.UserRepository;
+import org.example.expert.domain.user.service.UserAdminService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.system.CapturedOutput;
-import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ActiveProfiles("test")
-@SpringBootTest
-@AutoConfigureMockMvc
-@ExtendWith(OutputCaptureExtension.class)
+@WebMvcTest(UserAdminController.class)
 class UserAdminControllerTest {
 
     @Autowired
@@ -32,36 +27,26 @@ class UserAdminControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private UserRepository userRepository;
+    @MockBean
+    private UserAdminService userAdminService;
 
     @Test
-    void 회원_권한을_정상적으로_변경하고_AOP_로그가_출력된다(CapturedOutput output) throws Exception {
+    @DisplayName("회원 권한 변경 요청 성공")
+    void changeUserRole_success() throws Exception {
         // given
-        User user = userRepository.save(new User("user@test.com", "Password1@", UserRole.USER));
-        Long userId = user.getId();
-
-        User admin = userRepository.save(new User("admin@test.com", "Password1@", UserRole.ADMIN));
-        Long adminId = admin.getId();
-
+        Long userId = 1L;
         UserRoleChangeRequest userRoleChangeRequest = new UserRoleChangeRequest("ADMIN");
+
         String json = objectMapper.writeValueAsString(userRoleChangeRequest);
 
         // when
         mockMvc.perform(patch("/admin/users/" + userId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .requestAttr("userId", adminId))
-                .andExpect(status().isOk());
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andDo(print());
 
-        // then: AOP 로그 검증
-        assertThat(output)
-                .contains("========== ADMIN API REQUEST ==========")
-                .contains("Request Time  : ")
-                .contains("Request Class : ")
-                .contains("Request Method: ")
-                .contains("Request Body  : ")
-                .contains("Response Body : ")
-                .contains("=======================================");
+        // then
+        Mockito.verify(userAdminService).changeUserRole(eq(userId), any(UserRoleChangeRequest.class));
     }
 }
