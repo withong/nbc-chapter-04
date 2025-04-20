@@ -111,7 +111,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void 로그인_시_비밇번호가_일치하지_않으면_예외가_발생한다() {
+    void 로그인_시_비밀번호가_일치하지_않으면_예외가_발생한다() {
         // given
         SigninRequest signinRequest = new SigninRequest("test@test.com", "Password1@");
         User user = new User(signinRequest.getEmail(), signinRequest.getPassword(), UserRole.USER);
