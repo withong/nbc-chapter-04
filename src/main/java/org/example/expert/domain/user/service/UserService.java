@@ -21,7 +21,8 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserResponse getUser(long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new InvalidRequestException(UserErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new InvalidRequestException(UserErrorCode.USER_NOT_FOUND));
         return new UserResponse(user.getId(), user.getEmail());
     }
 
